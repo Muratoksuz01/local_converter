@@ -1,8 +1,12 @@
 package application;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
+
+
+
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -11,7 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,26 +27,24 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 /*
- * ffmpep i burada calıstırmıyorsun 
- * caliştirdiktan sonra class yapısına gecersin 
- * sonraki gunlerde merge islemini yaparsın 
- * mp4 de sade sesi cıkarma olayı sade goruntu cıkarma olayı ekle 
+ * mp4 ise silme sesi ozzellik gelsin  					input_file=example.mkv
+														output_file=example-nosound.mkv
+														
+														ffmpeg -i $input_file -c copy -an $output_file
  * 
  * 
- * 
- * */
+ * pdf ten png or jpg gecme 			convert   in.pdf out%d.png
+ */
 
-/*tek dosya  txt bos  /home/murar/deneme/yeni.png	/home/murar/deneme//yeni.jpg.jpg
- * tek doya text dolu sıkıntı yok
- * cok dosya text dolu patlıyor 
- * */
+
 
 public class SampleController1 {
     ObservableList<String> options =FXCollections.observableArrayList("png","jpg","mp4","mp3","pdf");
     List<String> TumPaths=new ArrayList<String>();
     List<String> TumNames=new ArrayList<String>();
 	File file;
-	String ffmpegPath;
+
+    String ffmpegPath;
     @FXML    private ResourceBundle resources;
     @FXML    private URL location;
     @FXML    private Button btn_convert;
@@ -54,53 +55,65 @@ public class SampleController1 {
 
     @FXML
     void btn_convert_click(ActionEvent event) {
-    	String command, text, type, name, parent = "";
-    	type = combo_type.getValue();
-	    String ch = txt_rename.getText();
-	    if(!ch.isEmpty() && !ch.equals("")) {//dolu ise 
-		    
-	    	for (String path : TumPaths) {
-	    		//String[] parts = path.split("/"); // burayı düzenle sonra ve name değişkeni kullanılmadı
-	    	    name=ch;
-	    	    SetandRun(path, name, type);
-
-
+    	
+	    
+	    String type = combo_type.getValue();
+	    String name = txt_rename.getText().trim();    
+	    if(type.equals("jpg")) {	    	
+		    for (String path : TumPaths) {
+		        String[] parts = path.split("/"); 
+		        String fileName = name.isEmpty() ? parts[parts.length - 1].replaceAll("\\..*$", "") : name;
+		        FileConverter<String> aa = new FileConverter<>(path,fileName, new ToJpg<String>());        
+		        aa.convert();
 		    }
 	    }
-	    else {// bos bıraktı ise 
-	    	for (String path : TumPaths) {
-	    		String[] parts = path.split("/"); // burayı düzenle sonra ve name değişkeni kullanılmadı
-	    		name = parts[parts.length - 1]; // Dosya adı
-	    	    name = name.substring(0, name.lastIndexOf('.'));
-	    	    SetandRun(path, name, type);
+	    else if(type.equals("png")) {	    	
+		    for (String path : TumPaths) {
+		        String[] parts = path.split("/"); 
+		        String fileName = name.isEmpty() ? parts[parts.length - 1].replaceAll("\\..*$", "") : name;
+		        FileConverter<String> aa = new FileConverter<>(path,fileName, new ToPng<String>());        
+		        aa.convert();
 		    }
 	    }
-    	
+	    else if(type.equals("mp3")){
+	    	for (String path : TumPaths) {
+		        String[] parts = path.split("/"); 
+		        String fileName = name.isEmpty() ? parts[parts.length - 1].replaceAll("\\..*$", "") : name;
+		        FileConverter<String> aa = new FileConverter<>(path,fileName, new ToMp3<String>());        
+		        aa.convert();
+		    }
+	    }
+	    else if(type.equals("mp4")){
+	    	String[] TumPathsArray = new String[TumPaths.size()]; // ArrayList'in boyutu kadar bir dizi oluşturun
+	    	TumPaths.toArray(TumPathsArray);
+	    	String[] parts = TumPathsArray[0].split("/"); 
+	        String fileName = name.isEmpty() ? parts[parts.length - 1].replaceAll("\\..*$", "") : name;
+	    	FileConverter<String[]> aa = new FileConverter<>(TumPathsArray,fileName, new ToMp4<String[]>());        
+	        aa.convert();
+	    }
+	    else if(type.equals("pdf")){
+	    	String[] TumPathsArray = new String[TumPaths.size()]; // ArrayList'in boyutu kadar bir dizi oluşturun
+	    	TumPaths.toArray(TumPathsArray);
+	    	String[] parts = TumPathsArray[0].split("/"); 
+	        String fileName = name.isEmpty() ? parts[parts.length - 1].replaceAll("\\..*$", "") : name;
+	    	FileConverter<String[]> aa = new FileConverter<>(TumPathsArray,fileName, new ToPdf<String[]>());        
+	        aa.convert();
+	    }
+	    
+	    else {
+	    	System.out.println("suanda ulasılmıyor !!!");
+	    }
+ 
+	    
+	    
+	    
+	    
     }
-    void SetandRun(String path,String name,String type) {
-    	String text,command,parent;
-		String[] parts = path.split("/"); // burayı düzenle sonra ve name değişkeni kullanılmadı
-
-    	String[] parentArray = Arrays.copyOfRange(parts, 0, parts.length - 1);
-  	    parent = String.join("/", parentArray)+"/";
-  	    
-  	    text=CheckFile(parent, name, type);
-  	    text+="."+type;
-  	    command = ffmpegPath + "\t" + "-i" + "\t" + path + "\t" + parent + text;
-  	    System.out.println("name:"+name);
-  	    System.out.println("parent:"+parent);
-  	    System.out.println("text:"+text);
-  	    System.out.println("command :"+command);
-  	    run_command(command);
-    }
-    	
+ 	
   
     @FXML
     void btn_open_file_click(ActionEvent event) {
-    	/*
-    	 * burada dosya yada dosyaları secip uzantısına gore combobox dan onları siliyorum 
-    	 * mantıgımız jpg seciyorsam bunu tekrar jpg dosyasına donusturmem herhalde 
-    	 * */
+    
     	TumPaths.clear();TumNames.clear();
         File initialDirectory = new File("/home/murar/deneme/");
     	combo_type.getItems().clear();
@@ -111,15 +124,12 @@ public class SampleController1 {
         FileChooser.ExtensionFilter filter = new ExtensionFilter("Tüm Dosyalar", "*.*");
         fileChooser.getExtensionFilters().add(filter);
 
-        // Dosya seçme penceresini aç
-        //file = fileChooser.showOpenDialog(new Stage());
-
+       
         
         List<File> selectedFiles = fileChooser.showOpenMultipleDialog(null);
         Set<String> uzantilar=new HashSet<String>();
         if (selectedFiles != null) {
             for (File file : selectedFiles) {
-            	// Dosya seçildiğinde yapılacak işlemler burada gerçekleştirilir
                 System.out.println("Seçilen dosya: " + file.getAbsolutePath());//secilen dosyanın tum path
                 System.out.println("parent name: "+file.getParent());
                 TumPaths.add(file.getAbsolutePath());//liste ekliyoruz cunku birden fazla secmiş olabilir 
@@ -136,10 +146,11 @@ public class SampleController1 {
                 
                 
             }
-            
+            /*
             for (String uzantı : uzantilar) {//combobox da secili uzantıları siliyoruz 
             	combo_type.getItems().remove(uzantı);
             }
+            */
         }
         
         
@@ -151,7 +162,8 @@ public class SampleController1 {
     @FXML
     void initialize() {
     	 combo_type.getItems().addAll(options);
-    	 
+    	
+    	 /*
     	 String projectDir = System.getProperty("user.dir");
          
          // ffmpeg klasörünün yolu
@@ -168,54 +180,64 @@ public class SampleController1 {
          } else {
              System.out.println("ffmpeg dosyası bulunamadı: " + ffmpegPath);
          }
-        //System.out.println(CheckFile("/home/murar/deneme/","soru micro","png" ));
+         */
+      //   aa.convert();																			//OOP
+    
+    //run_command("/home/murar/eclipse-workspace/converter/src/application/convert /home/murar/deneme/yeni.jpg /home/murar/deneme/alilera.pdf");
     }
     
     
     void run_command(String command) {
     
-    	// soruncuz sadece cıkıs kodunu veriyor fakat
-    	String[] customCommand=command.split("\t");
-    	
-    	/*
-    	  String[] customCommand = {
-                "/home/murar/eclipse-workspace/converter/ffmpeg/ffmpeg",
-                "-i",
-                "/home/murar/deneme/soru micro.png",
-                "/home/murar/deneme/yeni resim.jpg"
-    	  };
-    	  */
-   	
-    	  
-    	  //System.out.println("Komut Dizisi:");
-          //for (String command1 : customCommand) {
-          //    System.out.println(command1);
-          //}         
     	try {
-                // Komutu çalıştır
-                Process process = Runtime.getRuntime().exec(customCommand);
+    		
+    	String komut=command;
+    	System.out.println(komut);
+        Process process = Runtime.getRuntime().exec(komut);
 
-                // İşlem çıktısını oku
-                BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()));
-               
-                
-                //String line;
-                //while ((line = reader.readLine()) != null) {
-                //    System.out.println(line);
-                //}
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-                // İşlemi beklet ve çıkış kodunu al
-                int exitCode = process.waitFor();
-                System.out.println("Çıkış kodu: " + exitCode);
+        String satir;
+        while ((satir = reader.readLine()) != null) {
+            System.out.println(satir);
+        }
 
-            } catch (Exception e) {
-				System.out.println("run command foksiyonad hata var ");
-			}
+        int exitCode = process.waitFor();
+        System.out.println("Çıkış kodu: " + exitCode);
 
+        reader.close();
+    	}
+    	catch (Exception e) {
+			// TODO: handle exception
+		}
+		
     }
+     
+    void SetandRun(String path,String name,String type) {
+    	/*
+    	 * path: dosyanın uzun hali olacak c:vlsnvls/vds/vds.png gibi
+    	 * name: yeni olmasını istediginiz isim cıkıs ismi bu olacak ali gibi  
+    	 * type: olmasını istediginiz uzantı sekli olacak jpg gibi 
+    	 * Return :
+    	 * 	dizi uc elemanı birleştirp gondermek icin 
+    	 * */
+    	String text,command,parent;
+		String[] parts = path.split("/"); // burayı düzenle sonra ve name değişkeni kullanılmadı
 
-
+    	String[] parentArray = Arrays.copyOfRange(parts, 0, parts.length - 1);
+  	    parent = String.join("/", parentArray)+"/";
+  	    
+  	    text=CheckFile(parent, name, type);
+  	    text+="."+type;
+  	    command = ffmpegPath + "\t" + "-i" + "\t" + path + "\t" + parent + text;
+  	    System.out.println("name:"+name);
+  	    System.out.println("parent:"+parent);
+  	    System.out.println("text:"+text);
+  	    System.out.println("command :"+command);
+  	    run_command(command);
+    }
+   
+    
 	String CheckFile(String parent,String path,String type) {
 		int i=0;
 		String fullname,temp;
@@ -237,36 +259,4 @@ public class SampleController1 {
 	
 
 }
-/*//ls de calişiyor fakat cıktıyı vermıyor 
-///String customCommand = command;
-//String customCommand = "/home/murar/eclipse-workspace/converter/ffmpeg/ffmpeg -i '/home/murar/deneme/soru.png' -o /home/murar/deneme/yeni.jpg";
-String customCommand="ls";
-try {
-	
-	Process process = Runtime.getRuntime().exec(customCommand);
-	int exitCode = process.waitFor();
-	System.out.println(exitCode);
-}catch (Exception e) {
-	e.printStackTrace();
-}
-*/
 
-/* // sorunsuz calişiyor
-String customCommand = "ls";
-try {
-    Process process = Runtime.getRuntime().exec(customCommand);
-    
-    // İşlem çıktısını okumak için BufferedReader kullanın
-    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    String line;
-    while ((line = reader.readLine()) != null) {
-        // Her bir satırı yazdırın veya işlem çıktısını başka bir şekilde işleyin
-        System.out.println(line);
-    }
-    
-    int exitCode = process.waitFor();
-    System.out.println("Exit code: " + exitCode);
-} catch (Exception e) {
-    e.printStackTrace();
-}
-*/
