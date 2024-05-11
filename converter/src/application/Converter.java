@@ -9,7 +9,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 
 public abstract class Converter<T>{
-	abstract void run(T inputFile,  String outputFile);
+	abstract void run(T inputFile,  String outputFile,String tempValue);
 	
     String ffmpegPath;
     String convertPath;
@@ -83,7 +83,7 @@ public abstract class Converter<T>{
   	    parent = String.join("/", parentArray)+"/";
 		
 	    text=CheckFile(parent, output, type);
-  	    text+="."+type;
+  	    //text+="."+type;
   	    //command = ffmpegPath + "\t" + "-i" + "\t" + path + "\t" + parent + text;
   	    System.out.println("name:"+output);
   	    System.out.println("parent:"+parent);
@@ -126,8 +126,7 @@ public abstract class Converter<T>{
 		 Alert alert = new Alert(AlertType.INFORMATION);
 	   	 alert.setTitle("Kücük bir problemimiz var...");
 	   	 alert.setHeaderText("Yaptıgın işlemi kontrol edermisin :):)");
-	   	 alert.setContentText("bu kodu kendi terminalinizden caliştirimisiniz :\n "+command +"\n sende hata alıyorsan işlemine takrar bak lütfen ;\n"
-	   	 		+ "yoksa uzgunuz suanlık bu işlemı gerceklestıremıyoruz Anlayısınız için tesekkur ederiz ");
+	   	 alert.setContentText(command+ " Anlayısınız için tesekkur ederiz ");
 	   	 alert.showAndWait().ifPresent(rs -> {
 	   	     if (rs == ButtonType.OK) {
 	   	         System.out.println("Pressed OK.");

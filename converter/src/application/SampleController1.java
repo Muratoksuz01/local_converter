@@ -15,11 +15,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -52,6 +56,9 @@ public class SampleController1 {
     @FXML    private ComboBox<String> combo_type;
     @FXML    private Label lbl_path;
     @FXML    private TextField txt_rename;
+    @FXML    private CheckBox checkbox;
+    
+  
 
     @FXML
     void btn_convert_click(ActionEvent event) {
@@ -61,17 +68,27 @@ public class SampleController1 {
 	    String name = txt_rename.getText().trim();    
 	    if(type.equals("jpg")) {	    	
 		    for (String path : TumPaths) {
+		    	
+		    	String[] partss = path.split("\\.");
+                String extension=partss[partss.length -1];
+                
+		    	
 		        String[] parts = path.split("/"); 
 		        String fileName = name.isEmpty() ? parts[parts.length - 1].replaceAll("\\..*$", "") : name;
-		        FileConverter<String> aa = new FileConverter<>(path,fileName, new ToJpg<String>());        
+		        FileConverter<String> aa = new FileConverter<>(path,fileName, new ToJpg<String>(),extension);        
 		        aa.convert();
 		    }
 	    }
 	    else if(type.equals("png")) {	    	
 		    for (String path : TumPaths) {
+		    	
+		    	String[] partss = path.split("\\.");
+                String extension=partss[partss.length -1];
+                
+
 		        String[] parts = path.split("/"); 
 		        String fileName = name.isEmpty() ? parts[parts.length - 1].replaceAll("\\..*$", "") : name;
-		        FileConverter<String> aa = new FileConverter<>(path,fileName, new ToPng<String>());        
+		        FileConverter<String> aa = new FileConverter<>(path,fileName, new ToPng<String>(),extension);        
 		        aa.convert();
 		    }
 	    }
@@ -79,16 +96,19 @@ public class SampleController1 {
 	    	for (String path : TumPaths) {
 		        String[] parts = path.split("/"); 
 		        String fileName = name.isEmpty() ? parts[parts.length - 1].replaceAll("\\..*$", "") : name;
-		        FileConverter<String> aa = new FileConverter<>(path,fileName, new ToMp3<String>());        
+		        FileConverter<String> aa = new FileConverter<>(path,fileName, new ToMp3<String>(),null);        
 		        aa.convert();
 		    }
 	    }
 	    else if(type.equals("mp4")){
+	    	boolean isSelected=checkbox.isSelected();
+	    	String myString = isSelected ? "true" : "false";
+
 	    	String[] TumPathsArray = new String[TumPaths.size()]; // ArrayList'in boyutu kadar bir dizi oluşturun
 	    	TumPaths.toArray(TumPathsArray);
 	    	String[] parts = TumPathsArray[0].split("/"); 
 	        String fileName = name.isEmpty() ? parts[parts.length - 1].replaceAll("\\..*$", "") : name;
-	    	FileConverter<String[]> aa = new FileConverter<>(TumPathsArray,fileName, new ToMp4<String[]>());        
+	    	FileConverter<String[]> aa = new FileConverter<>(TumPathsArray,fileName, new ToMp4<String[]>(),myString);        
 	        aa.convert();
 	    }
 	    else if(type.equals("pdf")){
@@ -96,7 +116,7 @@ public class SampleController1 {
 	    	TumPaths.toArray(TumPathsArray);
 	    	String[] parts = TumPathsArray[0].split("/"); 
 	        String fileName = name.isEmpty() ? parts[parts.length - 1].replaceAll("\\..*$", "") : name;
-	    	FileConverter<String[]> aa = new FileConverter<>(TumPathsArray,fileName, new ToPdf<String[]>());        
+	    	FileConverter<String[]> aa = new FileConverter<>(TumPathsArray,fileName, new ToPdf<String[]>(),null);        
 	        aa.convert();
 	    }
 	    
@@ -113,7 +133,7 @@ public class SampleController1 {
   
     @FXML
     void btn_open_file_click(ActionEvent event) {
-    
+    	//combo_type.setDisable(false);
     	TumPaths.clear();TumNames.clear();
         File initialDirectory = new File("/home/murar/deneme/");
     	combo_type.getItems().clear();
@@ -158,11 +178,31 @@ public class SampleController1 {
         
        
     }
-
+   
+    private void degerDegistigindeTetiklenenFonksiyon(String yeniDeger) {
+    	try {
+    		
+        System.out.println("Seçilen değer: " + yeniDeger);
+        checkbox.setDisable(!yeniDeger.equals("mp4"));
+    	}
+    	catch (java.lang.NullPointerException e) {
+			
+		}
+ 
+    }
     @FXML
     void initialize() {
     	 combo_type.getItems().addAll(options);
-    	
+    	// combo_type.setDisable(true);
+    	 combo_type.valueProperty().addListener(new ChangeListener<String>() {
+             @Override
+             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                 degerDegistigindeTetiklenenFonksiyon(newValue);
+             }
+
+		});
+    	 
+    	 
     	 /*
     	 String projectDir = System.getProperty("user.dir");
          

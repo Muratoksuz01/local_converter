@@ -3,11 +3,11 @@ package application;
 public class ToPdf<T> extends Converter<T>{
 	String TypeName="pdf";
 	 @Override
-    void run(T inputFile,String outputFile) {// dosyaları setup run foksiınndan glecek commandı hazırla sonra run 
+    void run(T inputFile,String outputFile,String tempValue) {// dosyaları setup run foksiınndan glecek commandı hazırla sonra run 
 		 String[][] donen=new String[3][];
 		 String command=convertPath+" ";
 		 //String[] donenpath=new String[5];
-		 String parent,text,mp3file = null, mp4file = null,aa;
+		 String parent,text ,aa;
 	     String[] inputFilePath = (String[]) inputFile; // T tipini String dizisine 'e dönüştür
 		 donen=SetandRun(inputFilePath,outputFile,TypeName);							
 	     parent=donen[0][0];
@@ -23,6 +23,9 @@ public class ToPdf<T> extends Converter<T>{
 	    	 if(path.endsWith("jpg") || path.endsWith("png")) {
 	    	System.out.println("burada olacak ");
 	    		 command += path+" ";
+	    	 }
+	    	 else {
+	    		 	ErrorMassage("pdf e cevirirken sadece jpg ve png dosyaları kabul edilmektedir ");														// hata fırlat
 	    	 }
 	     }
 	 
