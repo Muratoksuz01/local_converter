@@ -15,5 +15,6 @@
       <Label fx:id="lbl_path" layoutX="52.0" layoutY="100.0" text="sectiginiz path" />
       <TextField fx:id="txt_rename" layoutX="608.0" layoutY="39.0" promptText="rename file " />
       <CheckBox fx:id="checkbox" disable="true" layoutX="456.0" layoutY="51.0" mnemonicParsing="false" text="sil sesi" />
+      <Button fx:id="btn_show_log" layoutX="62.0" layoutY="145.0" mnemonicParsing="false" onAction="#btn_show_log_click" text="show all log" />
    </children>
 </AnchorPane>

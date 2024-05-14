@@ -2,11 +2,17 @@ package application;
 
 
 
-
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -22,6 +28,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -29,16 +38,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
-/*
- * mp4 ise silme sesi ozzellik gelsin  					input_file=example.mkv
-														output_file=example-nosound.mkv
-														
-														ffmpeg -i $input_file -c copy -an $output_file
- * 
- * 
- * pdf ten png or jpg gecme 			convert   in.pdf out%d.png
- */
+
 
 
 
@@ -47,6 +50,8 @@ public class SampleController1 {
     List<String> TumPaths=new ArrayList<String>();
     List<String> TumNames=new ArrayList<String>();
 	File file;
+	 Stage stage;
+     Parent root;
 
     String ffmpegPath;
     @FXML    private ResourceBundle resources;
@@ -57,9 +62,28 @@ public class SampleController1 {
     @FXML    private Label lbl_path;
     @FXML    private TextField txt_rename;
     @FXML    private CheckBox checkbox;
-    
+    @FXML    private Button btn_show_log;
   
-
+    @FXML
+    void btn_show_log_click(ActionEvent event) {
+    	
+    	
+    	try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Log.fxml"));
+            Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            
+            stage.setTitle("New Scene");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.show();
+            
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     @FXML
     void btn_convert_click(ActionEvent event) {
     	
@@ -203,28 +227,16 @@ public class SampleController1 {
 		});
     	 
     	 
-    	 /*
-    	 String projectDir = System.getProperty("user.dir");
-         
-         // ffmpeg klasörünün yolu
-         String ffmpegDir = Paths.get(projectDir, "ffmpeg").toString();
-         
-         // ffmpeg dosyasının tam yolu
-         ffmpegPath = Paths.get(ffmpegDir, "ffmpeg").toString();
-         
-         // ffmpeg dosyasının varlığını kontrol edin
-         java.io.File ffmpegFile = new java.io.File(ffmpegPath);
-         if (ffmpegFile.exists()) {
-             System.out.println("ffmpeg dosyası bulundu: " + ffmpegPath);
-           
-         } else {
-             System.out.println("ffmpeg dosyası bulunamadı: " + ffmpegPath);
-         }
-         */
-      //   aa.convert();																			//OOP
     
-    //run_command("/home/murar/eclipse-workspace/converter/src/application/convert /home/murar/deneme/yeni.jpg /home/murar/deneme/alilera.pdf");
+  
+    
+    
+    
+    
     }
+    
+    
+    
     
     
     void run_command(String command) {

@@ -1,6 +1,6 @@
 package application;
 
-
+import java.time.LocalDate;
 
 public class ToPng<T> extends Converter<T>{
 	String TypeName="png";
@@ -33,7 +33,11 @@ public class ToPng<T> extends Converter<T>{
              int exitCode = process.waitFor();
              System.out.println("Çıkış kodu: " + exitCode);
              if(exitCode!=0) {
+            	 SaveLog(command,String.valueOf(LocalDate.now()) , String.valueOf(exitCode));
+
             	 ErrorMassage(command);
+             }else {
+            	 SaveLog(command,String.valueOf(LocalDate.now()) , String.valueOf(exitCode));
              }
          } catch (Exception e) {
 			System.out.println("run command foksiyonad hata var ");

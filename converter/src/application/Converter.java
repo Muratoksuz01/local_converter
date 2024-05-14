@@ -2,6 +2,10 @@ package application;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 
 import javafx.scene.control.Alert;
@@ -10,7 +14,8 @@ import javafx.scene.control.Alert.AlertType;
 
 public abstract class Converter<T>{
 	abstract void run(T inputFile,  String outputFile,String tempValue);
-	
+	  Connection c = null;
+		Statement stmt = null;
     String ffmpegPath;
     String convertPath;
      public Converter(){
@@ -134,7 +139,39 @@ public abstract class Converter<T>{
 	   	 });
 	 }
 	
-	
+	void SaveLog(String command,String date,String isSuccess) {
+		try {
+            connect();
+            Statement stmt = c.createStatement();
+            //String sql = "INSERT INTO convert VALUES("+command+","+date+","+isSuccess+");";
+            String sql="INSERT INTO convert (command, date, isSuccess)  VALUES('%s','%s','%s');".formatted(command,date,isSuccess);
+            System.out.println( sql);
+            stmt.executeUpdate(sql);
+            stmt.close();
+            c.commit();
+            c.close();
+            
+            // Veritabanından silindikten sonra tabloyu güncelle
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		
+	}
+	 protected void connect() {
+     	 
+   		try {
+   			//Class.forName("org.sqlite.JDBC");
+   		      c = DriverManager.getConnection("jdbc:sqlite:/home/murar/sqllite/Convert.db");
+   		      c.setAutoCommit(false);
+   		      System.out.println("Opened database successfully");
+
+   		} catch (SQLException e) {
+        	System.out.println("baglanmadı");
+            System.out.println(e.getMessage());
+        }
+      	
+      	
+      }
 	
 }
  

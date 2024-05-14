@@ -1,5 +1,7 @@
 package application;
 
+import java.time.LocalDate;
+
 //ffmpeg -i $input_file -c copy -an $output_file
 
 public class ToMp4<T> extends Converter<T>{
@@ -58,7 +60,11 @@ public class ToMp4<T> extends Converter<T>{
 	             int exitCode = process.waitFor();
 	             System.out.println("Çıkış kodu: " + exitCode);
 	             if(exitCode!=0) {
+	            	 SaveLog(command,String.valueOf(LocalDate.now()) , String.valueOf(exitCode));
+
 	            	 ErrorMassage(command);
+	             }else {
+	            	 SaveLog(command,String.valueOf(LocalDate.now()) , String.valueOf(exitCode));
 	             }
 	        } catch (Exception e) {
            	 	//ErrorMassage(command);

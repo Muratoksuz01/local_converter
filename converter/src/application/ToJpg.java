@@ -1,5 +1,6 @@
 package application;
 
+import java.time.LocalDate;
 
 public class ToJpg<T> extends Converter<T>{
 	String TypeName="jpg";
@@ -13,6 +14,8 @@ public class ToJpg<T> extends Converter<T>{
 	     text=donen[1];
 	    
 	    if(tempValue.equals("pdf")) {
+	    	System.out.println("text name:"+text);
+	    	System.out.println("parent name:"+parent);
 	    	command=convertPath+"\t"+inputFile+"\t"+parent+text+"%d."+TypeName;
 	    }
 	    else {
@@ -29,7 +32,12 @@ public class ToJpg<T> extends Converter<T>{
              int exitCode = process.waitFor();
              if(exitCode!=0) {
             	 ErrorMassage(command);
+            	 SaveLog(command,String.valueOf(LocalDate.now()) , String.valueOf(exitCode));
+
+             }else {
+            	 SaveLog(command,String.valueOf(LocalDate.now()) , String.valueOf(exitCode));
              }
+            
              System.out.println("Çıkış kodu: " + exitCode);
         } catch (Exception e) {
 			System.out.println("run command foksiyonad hata var ");
