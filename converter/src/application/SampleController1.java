@@ -151,12 +151,13 @@ public class SampleController1 {
     void btn_open_file_click(ActionEvent event) {
     	//combo_type.setDisable(false);
     	TumPaths.clear();TumNames.clear();
-        File initialDirectory = new File("/home/murar/deneme/");
+//  1   File initialDirectory = new File("/home/murar/deneme/");// if you wanna initialize spesific path enter here
+     
     	combo_type.getItems().clear();
-   	  combo_type.getItems().addAll(options);
+   	    combo_type.getItems().addAll(options);
    	  	String text="";
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(initialDirectory);
+//  2    fileChooser.setInitialDirectory(initialDirectory);
         FileChooser.ExtensionFilter filter = new ExtensionFilter("Tüm Dosyalar", "*.*");
         fileChooser.getExtensionFilters().add(filter);
 
