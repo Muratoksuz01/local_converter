@@ -14,8 +14,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
@@ -43,11 +41,7 @@ public class LogController {
 
     @FXML
     void btn_delete_click(ActionEvent event) {
-    	/* ObservableList<DataModel> data = tabloview.getItems();
-    	    for (DataModel item : data) {
-    	    //    System.out.println("ID: " + item.getId() + ", command : " + item.getCommand() + " date: "+item.getDate() + " isSuccess: "+item.GetSuccess() );
-    	    }
-*/
+   
     	
     	
     	DataModel selectedData= tabloview.getSelectionModel().getSelectedItem();
@@ -86,7 +80,6 @@ public class LogController {
  
     	  connect();
     	    GetAndFillData();
-
     	    idColumn.setCellValueFactory(cellData -> cellData.getValue().idProperty().asObject());
     	    commandColumn.setCellValueFactory(cellData -> cellData.getValue().commandProperty());
     	    dateColumn.setCellValueFactory(cellData -> cellData.getValue().dateProperty());
@@ -120,16 +113,13 @@ public class LogController {
 
 		      while ( rs.next() ) {
 		         int id = rs.getInt("id");
-		         String idString=String.valueOf(id);
 		         String  command = rs.getString("command");
 		         String  date = rs.getString("date");
 		         String  isSuccessString = rs.getString("isSuccess");
 		         boolean issuccess= isSuccessString.equals("0")  ? true : false;  
 	            data.add(new DataModel(id, command,date,issuccess));
-	       //     dataString.add(idString+"\t"+command+"\t"+date+"\t"+issuccess);
-//tabloview.getItems().add(new DataModel(id, command, date, issuccess));
+	     
 		      }
-		  //    tabloview.getItems().addAll(data);
 		      System.out.println("burada ");
 		      rs.close();
 		      stmt.close();

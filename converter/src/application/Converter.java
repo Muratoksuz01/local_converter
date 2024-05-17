@@ -18,6 +18,7 @@ public abstract class Converter<T>{
 		Statement stmt = null;
     String ffmpegPath;
     String convertPath;
+    String databasePath;
      public Converter(){
     	 /*
     	  * ilk calişacak foksiyon buradan ffpegpath belirleyip sonraki foks.kullanılacak  
@@ -35,7 +36,7 @@ public abstract class Converter<T>{
             System.out.println("ffmpeg dosyası bulunamadı: " + ffmpegPath);
         }
         convertPath=Paths.get(projectDir,"convert").toString();
-        
+        databasePath=Paths.get(projectDir,"Convert.db").toString();
         java.io.File converterP = new java.io.File(ffmpegPath);
         if (converterP.exists()) {
             System.out.println("ffmpeg dosyası bulundu: " + convertPath);
@@ -157,11 +158,11 @@ public abstract class Converter<T>{
         }
 		
 	}
-	 protected void connect() {
+	protected void connect() {
      	 
    		try {
    			//Class.forName("org.sqlite.JDBC");
-   		      c = DriverManager.getConnection("jdbc:sqlite:/home/murar/sqllite/Convert.db");
+   		      c = DriverManager.getConnection("jdbc:sqlite:"+databasePath);
    		      c.setAutoCommit(false);
    		      System.out.println("Opened database successfully");
 
@@ -172,6 +173,56 @@ public abstract class Converter<T>{
       	
       	
       }
+	
+	  // Dosya yolundan uzantıyı almak için yardımcı metot
+	private  String getFileExtension(String dosyaYolu) {
+        File file = new File(dosyaYolu);
+        String fileName = file.getName();
+        int lastIndexOfDot = fileName.lastIndexOf(".");
+        if (lastIndexOfDot == -1) {
+            return ""; // Uzantı yoksa
+        }
+        return fileName.substring(lastIndexOfDot + 1);
+    }
+    
+ // Uzantının kontrol listesinde olup olmadığını kontrol etmek için yardımcı metot
+     private boolean isExtensionInList(String uzanti, String[] kontrolUzantilari) {
+        for (String kontrolUzantisi : kontrolUzantilari) {
+            if (uzanti.equalsIgnoreCase(kontrolUzantisi)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+     boolean isAllExtenssionCorrect(String[] kontrolUzantilari,String[] dosyaYolları) {
+    	boolean allCorrect=true;
+    	for (String dosyaYolu : dosyaYolları) {
+            String uzanti = getFileExtension(dosyaYolu);
+            if (isExtensionInList(uzanti, kontrolUzantilari)) {
+                System.out.println(dosyaYolu + " dosyasının uzantısı (" + uzanti + ") kontrol listesinde var.");
+            } else {
+                System.out.println(dosyaYolu + " dosyasının uzantısı (" + uzanti + ") kontrol listesinde yok.");
+                allCorrect=false;
+                return allCorrect;
+            }
+        }
+    	return allCorrect;
+    }
+     boolean isAllExtenssionCorrect(String[] kontrolUzantilari,String dosyaYolları) {
+     	boolean allCorrect=true;
+             String uzanti = getFileExtension(dosyaYolları);
+             if (isExtensionInList(uzanti, kontrolUzantilari)) {
+                 System.out.println(dosyaYolları + " dosyasının uzantısı (" + uzanti + ") kontrol listesinde var.");
+             } else {
+                 System.out.println(dosyaYolları + " dosyasının uzantısı (" + uzanti + ") kontrol listesinde yok.");
+                 allCorrect=false;
+                 return allCorrect;
+             }
+       
+     	return allCorrect;
+     }
+	
 	
 }
  

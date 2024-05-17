@@ -1,48 +1,4 @@
 package application;
-/*
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.StringProperty;
-
-public class DataModel {
-	 private final Integer id;
-	    private final String command;
-	    private final String date;
-	    private final boolean isSuccess;
-
-	    public DataModel(Integer id, String command,String date,boolean isSuccess) {
-	        this.id = id;
-	        this.command = command;
-	        this.date = date;
-	        this.isSuccess = isSuccess;
-	        //System.out.println("ID: " + id + ", Command: " + command + ", Date: " + date + ", isSuccess: " + isSuccess);
-
-	        
-	    }
-
-		public Integer getId() {
-			return id;
-		}
-
-		public String getCommand() {
-			return command;
-		}
-
-		public String getDate() {
-			return date;
-		}
-
-		public String GetSuccess() {
-			return  String.valueOf(isSuccess);
-		}
-		
-		
-
-	    
-}*/
-
-
-
 
 import javafx.beans.property.*;
 
